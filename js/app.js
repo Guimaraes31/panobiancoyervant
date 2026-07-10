@@ -46,19 +46,23 @@
   const iconOpen = document.getElementById('icon-open');
   const iconClose = document.getElementById('icon-close');
 
+  function setMenuOpen(open) {
+    mobileNav?.classList.toggle('open', open);
+    menuBtn?.setAttribute('aria-expanded', String(open));
+    iconOpen?.classList.toggle('hidden', open);
+    iconClose?.classList.toggle('hidden', !open);
+    document.body.classList.toggle('nav-open', open);
+    menuBtn?.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+
   menuBtn?.addEventListener('click', () => {
-    const open = mobileNav.classList.toggle('open');
-    menuBtn.setAttribute('aria-expanded', String(open));
-    iconOpen.classList.toggle('hidden', open);
-    iconClose.classList.toggle('hidden', !open);
+    setMenuOpen(!mobileNav.classList.contains('open'));
   });
   mobileNav?.querySelectorAll('a').forEach((a) => {
-    a.addEventListener('click', () => {
-      mobileNav.classList.remove('open');
-      menuBtn.setAttribute('aria-expanded', 'false');
-      iconOpen.classList.remove('hidden');
-      iconClose.classList.add('hidden');
-    });
+    a.addEventListener('click', () => setMenuOpen(false));
+  });
+  window.addEventListener('resize', () => {
+    if (window.matchMedia('(min-width: 1024px)').matches) setMenuOpen(false);
   });
 
   /* Scroll spy */
@@ -146,6 +150,7 @@
     overlay.classList.add('active');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('nav-open');
     mClose.focus();
   }
 
@@ -153,6 +158,9 @@
     overlay.classList.remove('active');
     overlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    if (!mobileNav?.classList.contains('open')) {
+      document.body.classList.remove('nav-open');
+    }
     prevFocus?.focus();
   }
 
