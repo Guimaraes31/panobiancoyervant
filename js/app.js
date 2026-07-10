@@ -11,10 +11,11 @@
     gold: 'Olá! Vi o site da Panobianco Yervant e quero informações sobre o Plano Gold.',
     platinum: 'Olá! Vi o site da Panobianco Yervant e quero informações sobre o Plano Platinum.',
     'platinum-plus': 'Olá! Vi o site da Panobianco Yervant e quero informações sobre o Plano Platinum+.',
-    horarios: 'Olá! Gostaria de saber a grade de horários das aulas coletivas na Yervant.',
-    avaliacao: 'Olá! Gostaria de agendar uma avaliação física gratuita na Panobianco Yervant.',
+    horarios: 'Olá! Gostaria de confirmar a grade de horários das aulas coletivas na Yervant.',
+    avaliacao: 'Olá! Gostaria de agendar uma avaliação física na Panobianco Yervant.',
     cta: 'Olá! Vi o site da Panobianco Yervant e quero começar a treinar.',
     tour: 'Olá! Vi o Tour Virtual da Yervant e quero mais informações.',
+    visita: 'Olá! Quero agendar uma visita à unidade Yervant.',
   };
 
   function waLink(key, extra) {
@@ -23,12 +24,15 @@
     return `https://wa.me/${WA}?text=${encodeURIComponent(text)}`;
   }
 
-  document.querySelectorAll('[data-whatsapp]').forEach((el) => {
-    const k = el.dataset.whatsapp || 'default';
-    el.href = waLink(k);
-    el.target = '_blank';
-    el.rel = 'noopener noreferrer';
-  });
+  function bindWhatsApp(root) {
+    (root || document).querySelectorAll('[data-whatsapp]').forEach((el) => {
+      const k = el.dataset.whatsapp || 'default';
+      el.href = waLink(k);
+      el.target = '_blank';
+      el.rel = 'noopener noreferrer';
+    });
+  }
+  bindWhatsApp();
 
   /* Navbar */
   const nav = document.getElementById('navbar');
@@ -57,6 +61,24 @@
     });
   });
 
+  /* Scroll spy */
+  const sections = ['inicio', 'planos', 'estrutura', 'aulas', 'localizacao'];
+  const navLinks = document.querySelectorAll('[data-nav]');
+  function updateSpy() {
+    const y = window.scrollY + 100;
+    let current = 'inicio';
+    for (const id of sections) {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= y) current = id;
+    }
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      link.classList.toggle('is-active', href === `#${current}`);
+    });
+  }
+  window.addEventListener('scroll', updateSpy, { passive: true });
+  updateSpy();
+
   /* Reveal */
   const obs = new IntersectionObserver(
     (entries) => {
@@ -67,7 +89,7 @@
         }
       });
     },
-    { threshold: 0.1, rootMargin: '0px 0px -32px 0px' }
+    { threshold: 0.08, rootMargin: '0px 0px -24px 0px' }
   );
   document.querySelectorAll('.reveal').forEach((el) => obs.observe(el));
 
@@ -79,14 +101,14 @@
   let prevFocus = null;
 
   const scheduleHtml = `
-    <p class="text-[#A3A3A3] text-sm mb-5 leading-relaxed">Programação de aulas coletivas na unidade Yervant. Horários sujeitos a alteração — confirme com nossa equipe.</p>
+    <p class="text-[#A3A3A3] text-sm mb-4 leading-relaxed">Programação de referência das aulas coletivas. <strong class="text-[#E5E5E5]">Horários podem mudar</strong> — confirme sempre com a equipe no WhatsApp antes de ir.</p>
     <div class="space-y-3 text-sm">
       ${[
-        ['FitDance & Zumba', 'Seg, Qua, Sex — 19h30'],
-        ['Spinning', 'Ter, Qui — 07h e 20h'],
-        ['Funcional & Ritbox', 'Seg a Sex — 06h30 e 18h30'],
-        ['Pilates & Yoga', 'Ter, Qui — 10h · Sáb — 09h30'],
-        ['Artes Marciais & Jump', 'Qua, Sex — 20h30 · Sáb — 10h30'],
+        ['FitDance & Zumba', 'Consulte grade atualizada'],
+        ['Spinning', 'Consulte grade atualizada'],
+        ['Funcional & Ritbox', 'Consulte grade atualizada'],
+        ['Pilates & Yoga', 'Consulte grade atualizada'],
+        ['Artes Marciais & Jump', 'Consulte grade atualizada'],
       ].map(([t, h]) => `
         <div class="p-4 rounded-2xl bg-[#0A0A0A] border border-white/5">
           <p class="font-semibold text-[#FF6B00]">${t}</p>
@@ -101,15 +123,15 @@
   `;
 
   const tourHtml = `
-    <p class="text-[#A3A3A3] text-sm mb-5 leading-relaxed">Explore cada ambiente da unidade Yervant — musculação, aulas coletivas, vestiários e muito mais.</p>
-    <div class="rounded-2xl overflow-hidden border border-white/5 mb-5 aspect-video bg-[#0A0A0A] flex items-center justify-center">
-      <img src="${LOGO}" alt="Panobianco" class="h-10 opacity-40 mb-4 absolute">
+    <p class="text-[#A3A3A3] text-sm mb-5 leading-relaxed">Explore a unidade Yervant no tour oficial Panobianco — musculação, aulas e ambientes.</p>
+    <div class="rounded-2xl overflow-hidden border border-white/5 mb-5 aspect-video bg-[#0A0A0A] flex items-center justify-center relative">
+      <img src="${LOGO}" alt="" class="h-10 opacity-30 absolute" width="140" height="32">
       <a href="${TOUR_URL}" target="_blank" rel="noopener noreferrer"
          class="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm relative z-10">
         Abrir Tour Virtual
       </a>
     </div>
-    <p class="text-xs text-[#A3A3A3] text-center">Você será direcionado ao tour oficial da unidade.</p>
+    <p class="text-xs text-[#A3A3A3] text-center">Você será direcionado ao site oficial da unidade.</p>
     <a href="${waLink('tour')}" data-whatsapp="tour" target="_blank" rel="noopener noreferrer"
        class="btn-outline mt-4 w-full inline-flex items-center justify-center px-6 py-3.5 text-sm">
       Tirar dúvidas no WhatsApp
@@ -120,11 +142,7 @@
     prevFocus = document.activeElement;
     mTitle.textContent = title;
     mBody.innerHTML = html;
-    mBody.querySelectorAll('[data-whatsapp]').forEach((el) => {
-      el.href = waLink(el.dataset.whatsapp || 'default');
-      el.target = '_blank';
-      el.rel = 'noopener noreferrer';
-    });
+    bindWhatsApp(mBody);
     overlay.classList.add('active');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -165,25 +183,122 @@
     window.open(waLink('default', extra), '_blank', 'noopener,noreferrer');
   });
 
-  /* Aulas — carrossel infinito (duplica cards para loop contínuo) */
-  const classesTrack = document.getElementById('classes-carousel-track');
-  if (classesTrack) {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reducedMotion) {
-      [...classesTrack.children].forEach((item) => {
-        const clone = item.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        classesTrack.appendChild(clone);
-      });
-    }
-  }
+  /* ===== Hero Carousel (5s autoplay, pause on hover) ===== */
+  (function initHeroCarousel() {
+    const root = document.querySelector('[data-hero-carousel]');
+    if (!root) return;
 
-  /* Testimonials scroll */
-  const tTrack = document.getElementById('testimonials-track');
-  document.getElementById('t-prev')?.addEventListener('click', () => {
-    tTrack?.scrollBy({ left: -320, behavior: 'smooth' });
-  });
-  document.getElementById('t-next')?.addEventListener('click', () => {
-    tTrack?.scrollBy({ left: 320, behavior: 'smooth' });
-  });
+    const slides = Array.from(root.querySelectorAll('[data-slide]'));
+    const btnPrev = root.querySelector('[data-hero-prev]');
+    const btnNext = root.querySelector('[data-hero-next]');
+    const dotsWrap = root.querySelector('[data-hero-dots]');
+    const progress = root.querySelector('[data-hero-progress]');
+    const interval = Number(root.dataset.interval) || 5000;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let index = 0;
+    let timer = null;
+    let paused = false;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+      dot.setAttribute('role', 'tab');
+      dot.setAttribute('aria-label', 'Ir para slide ' + (i + 1));
+      dot.addEventListener('click', () => goTo(i, true));
+      dotsWrap.appendChild(dot);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function paint() {
+      slides.forEach((slide, i) => {
+        const on = i === index;
+        slide.classList.toggle('is-active', on);
+        slide.setAttribute('aria-hidden', on ? 'false' : 'true');
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === index);
+        dot.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      });
+      restartProgress();
+    }
+
+    function restartProgress() {
+      if (!progress) return;
+      root.classList.remove('is-playing');
+      void progress.offsetWidth;
+      if (!paused && !reduced) root.classList.add('is-playing');
+    }
+
+    function goTo(i, user) {
+      index = (i + slides.length) % slides.length;
+      paint();
+      if (user) restartAutoplay();
+    }
+
+    function next() { goTo(index + 1); }
+
+    function startAutoplay() {
+      stopAutoplay();
+      if (reduced || paused) return;
+      root.classList.add('is-playing');
+      timer = window.setInterval(next, interval);
+    }
+
+    function stopAutoplay() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+      root.classList.remove('is-playing');
+    }
+
+    function restartAutoplay() {
+      stopAutoplay();
+      if (!paused) startAutoplay();
+    }
+
+    btnNext?.addEventListener('click', () => goTo(index + 1, true));
+    btnPrev?.addEventListener('click', () => goTo(index - 1, true));
+
+    root.addEventListener('mouseenter', () => { paused = true; stopAutoplay(); });
+    root.addEventListener('mouseleave', () => { paused = false; startAutoplay(); });
+    root.addEventListener('focusin', () => { paused = true; stopAutoplay(); });
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget)) {
+        paused = false;
+        startAutoplay();
+      }
+    });
+
+    let touchX = null;
+    root.addEventListener('touchstart', (e) => {
+      touchX = e.changedTouches[0].clientX;
+      paused = true;
+      stopAutoplay();
+    }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      if (touchX == null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 40) goTo(index + (dx < 0 ? 1 : -1), true);
+      paused = false;
+      startAutoplay();
+    }, { passive: true });
+
+    root.tabIndex = 0;
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(index + 1, true); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(index - 1, true); }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAutoplay();
+      else if (!paused) startAutoplay();
+    });
+
+    paint();
+    startAutoplay();
+  })();
 })();
