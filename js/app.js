@@ -2,7 +2,7 @@
   'use strict';
 
   const WA = '5511994825556';
-  const LOGO = 'https://cdn.prod.website-files.com/67ec66139f8f56d61a1cd4c9/68a4b16e82a17a6f497bb192_Logo-Panobianco-mono-claro.svg';
+  const LOGO = 'assets/brand/logo-panobianco-mono.svg';
   const TOUR_URL = 'https://www.panobiancoacademia.com.br/academias/yervant';
 
   const msgs = {
@@ -190,6 +190,31 @@
     const extra = `Meu nome é ${name}, telefone ${phone}.`;
     window.open(waLink('default', extra), '_blank', 'noopener,noreferrer');
   });
+
+  /* Lazy-load Google Maps iframe when near viewport */
+  (function lazyMap() {
+    const iframe = document.querySelector('iframe[data-map][data-src]');
+    if (!iframe) return;
+    const load = () => {
+      if (!iframe.dataset.src) return;
+      iframe.src = iframe.dataset.src;
+      delete iframe.dataset.src;
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            load();
+            io.disconnect();
+          }
+        },
+        { rootMargin: '240px 0px' }
+      );
+      io.observe(iframe);
+    } else {
+      load();
+    }
+  })();
 
   /* ===== Hero Carousel (5s autoplay, pause on hover) ===== */
   (function initHeroCarousel() {

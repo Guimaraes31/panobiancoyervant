@@ -151,6 +151,13 @@ html {
   position: absolute;
   inset: 0;
 }
+.hero-slide__media picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .hero-slide__media img {
   width: 100%;
   height: 100%;
@@ -372,7 +379,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
@@ -382,6 +389,11 @@ body {
   margin: 0;
   /* espaço pro FAB no mobile (footer não fica por baixo) */
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* pesos de fonte: carregamos 400/600/700/800 (sem 500) */
+.font-medium {
+  font-weight: 600;
 }
 body.nav-open {
   overflow: hidden;
@@ -558,11 +570,16 @@ img, video, iframe {
   display: flex;
   flex-direction: column;
 }
+.struct-photo picture {
+  display: block;
+  width: 100%;
+}
 .struct-photo-img {
   width: 100%;
   aspect-ratio: 16 / 11;
   object-fit: cover;
   background: #1a1a1a;
+  display: block;
 }
 .struct-photo-body {
   padding: 1.15rem 1.25rem 1.35rem;
@@ -696,6 +713,11 @@ img, video, iframe {
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #1a1a1a;
+}
+.class-tile__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .class-tile__media img {
   width: 100%;
